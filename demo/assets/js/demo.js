@@ -8,6 +8,8 @@ var DEMO = {
 	ms_FilesDND: null,
 	ms_Raycaster: null,
 	ms_Clickable: [],
+	mixers: [],
+	loader: null,
 
     enable: (function enable() {
         try {
@@ -27,11 +29,14 @@ var DEMO = {
 		this.ms_Canvas.html(this.ms_Renderer.domElement);
 		this.ms_Scene = new THREE.Scene();
 		
-		this.ms_Camera = new THREE.PerspectiveCamera(55.0, WINDOW.ms_Width / WINDOW.ms_Height, 0.5, 3000000);
-		this.ms_Camera.position.set(0, Math.max(inParameters.width * 1.5, inParameters.height) / 8, -inParameters.height);
+		this.ms_Camera = new THREE.PerspectiveCamera(55.0, WINDOW.ms_Width / WINDOW.ms_Height, 0.5, 30000);
+		this.ms_Camera.position.set(0, Math.max(inParameters.width * 1.5, inParameters.height) / 20, -inParameters.height/2);
 		this.ms_Camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 		this.ms_Raycaster = new THREE.Raycaster();
+
+		var axes = new THREE.AxisHelper(2000); //xyz red green blue
+        this.ms_Scene.add(axes);
 		
 		// Initialize Orbit control		
 		this.ms_Controls = new THREE.OrbitControls(this.ms_Camera, this.ms_Renderer.domElement);
@@ -40,39 +45,80 @@ var DEMO = {
 		this.ms_Controls.maxDistance = 5000.0;
 		this.ms_Controls.maxPolarAngle = Math.PI * 0.495;
 	
-		// Add light
+		// Add sun
 		var directionalLight = new THREE.DirectionalLight(0xffff55, 1);
 		directionalLight.position.set(-600, 300, 600);
 		this.ms_Scene.add(directionalLight);
+
+		var loader1 = new THREE.STLLoader();
+				loader1.load( 'assets/img/slotted_disk.stl', function ( geometry ) {
+					var material = new THREE.MeshPhongMaterial( { color: 0xff5533, specular: 0x111111, shininess: 200 } );
+					var mesh = new THREE.Mesh( geometry, material );
+					mesh.position.set( 0, - 0.25, 0.6 );
+					mesh.rotation.set( 0, - Math.PI / 2, 0 );
+					mesh.scale.set( 200, 200, 200 );
+					mesh.castShadow = true;
+					mesh.receiveShadow = true;
+					this.ms_Scene.add( mesh );
+				} );
+
+		
+
+
+		//SUN===========================================================================
+		var sphere = new THREE.SphereGeometry(1000, 120, 120);
+        var sun = new THREE.PointLight(0xff0000, 10, 4000);
+        sun.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff123f })));
+        sun.position.set(0, 500, 3000);
+        this.ms_Scene.add(sun);
+
+
+        // sun.shadow.mapSize.width = 512;  // default
+        // sun.shadow.mapSize.height = 512; // default
+        // sun.shadow.camera.near = 0.5;       // default
+        // sun.shadow.camera.far = 500;
+
+
+
+        var spriteMaterial = new THREE.SpriteMaterial(
+            {
+                map: new THREE.ImageUtils.loadTexture('../assets/glow.png'),
+                useScreenCoordinates: false,
+                color: 0xff123f, transparent: false, blending: THREE.AdditiveBlending
+            });
+        var sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(140, 140, 1.0);
+        sun.add(sprite);
 		
 		// Create terrain
 		this.loadTerrain(inParameters);
+		// this.loadModels();
 		
 		// Load textures		
 		var waterNormals = new THREE.ImageUtils.loadTexture('../assets/img/waternormals.jpg');
 		waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping; 
 		
 		// Load filesdnd texture
-		new Konami(function() {
-			if(DEMO.ms_FilesDND == null)
-			{
-				var aTextureFDND = THREE.ImageUtils.loadTexture("assets/img/filesdnd_ad.png");
-				aTextureFDND.minFilter = THREE.LinearFilter;
-				DEMO.ms_FilesDND = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), new THREE.MeshBasicMaterial({ map : aTextureFDND, transparent: true, side : THREE.DoubleSide }));
+		// new Konami(function() {
+		// 	if(DEMO.ms_FilesDND == null)
+		// 	{
+		// 		var aTextureFDND = THREE.ImageUtils.loadTexture("assets/img/filesdnd_ad.png");
+		// 		aTextureFDND.minFilter = THREE.LinearFilter;
+		// 		DEMO.ms_FilesDND = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), new THREE.MeshBasicMaterial({ map : aTextureFDND, transparent: true, side : THREE.DoubleSide }));
 
-				// Mesh callback
-				DEMO.ms_FilesDND.callback = function() { window.open("http://www.filesdnd.com"); }
-				DEMO.ms_Clickable.push(DEMO.ms_FilesDND);
+		// 		// Mesh callback
+		// 		DEMO.ms_FilesDND.callback = function() { window.open("http://www.filesdnd.com"); }
+		// 		DEMO.ms_Clickable.push(DEMO.ms_FilesDND);
 				
-				DEMO.ms_FilesDND.position.y = 1200;
-				DEMO.ms_Scene.add(DEMO.ms_FilesDND);
-			}
-		});
+		// 		DEMO.ms_FilesDND.position.y = 1200;
+		// 		DEMO.ms_Scene.add(DEMO.ms_FilesDND);
+		// 	}
+		// });
 		
 		// Create the water effect
 		this.ms_Water = new THREE.Water(this.ms_Renderer, this.ms_Camera, this.ms_Scene, {
-			textureWidth: 512, 
-			textureHeight: 512,
+			textureWidth: 1024, 
+			textureHeight: 1024,
 			waterNormals: waterNormals,
 			alpha: 	1.0,
 			sunDirection: directionalLight.position.normalize(),
@@ -88,7 +134,7 @@ var DEMO = {
 		aMeshMirror.rotation.x = - Math.PI * 0.5;
 		this.ms_Scene.add(aMeshMirror);
 	
-		this.loadSkyBox();
+		// this.loadSkyBox();
 	},
 	
 	loadSkyBox: function loadSkyBox() {
@@ -120,6 +166,37 @@ var DEMO = {
 		
 		this.ms_Scene.add(aSkybox);
 	},
+
+	loadModels: function loadModels(){
+		this.loader = new THREE.FBXLoader();
+        this.loader.load('assets/img/Typing.fbx', function (object) {
+            object.mixer = new THREE.AnimationMixer(object);
+            mixers.push(object.mixer);
+            var action = object.mixer.clipAction(object.animations[0]);
+            action.play();
+            object.traverse(function (child) {
+                if (child.isMesh) {
+                    // child.castShadow = true;
+                    // child.receiveShadow = true;
+                }
+            });
+            object.scale.set(100, 10, 10);
+            object.position.set(0,0,0);
+            this.ms_Scene.add(object);
+			object.rotation.x = (Math.PI / 2);
+			this.ms_Renderer.render(this.ms_Scene, this.ms_Camera);
+
+		});
+
+		
+
+		
+		var geometry = new THREE.BoxGeometry(100, 100, 100);
+		var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+		var cube = new THREE.Mesh(geometry, material);
+		this.ms_Scene.add(cube);
+	},
+
 	
 	loadTerrain: function loadTerrain(inParameters) {
 		var terrainGeo = TERRAINGEN.Get(inParameters);
@@ -128,21 +205,35 @@ var DEMO = {
 		var terrain = new THREE.Mesh(terrainGeo, terrainMaterial);
 		terrain.position.y = - inParameters.depth * 0.4;
 		this.ms_Scene.add(terrain);
+		this.loadModels();
 	},
 	
 	display: function display() {
-		this.ms_Water.render();
+		// this.ms_Water.render();
 		this.ms_Renderer.render(this.ms_Scene, this.ms_Camera);
 	},
 	
 	update: function update() {
-		if (this.ms_FilesDND != null) {
-			this.ms_FilesDND.rotation.y += 0.01;
-		}
+		// if (this.ms_FilesDND != null) {
+		// 	this.ms_FilesDND.rotation.y += 0.01;
+		// }
 		this.ms_Water.material.uniforms.time.value += 1.0 / 60.0;
 		this.ms_Controls.update();
 		this.display();
+		// if (this.mixers.length > 0) {
+		// 	for (var i = 0; i < this.mixers.length; i++) {
+		// 		this.mixers[i].update(clock.getDelta());
+
+		// 	}
+		// }
+		// this.animate();
 	},
+
+	// animate: function animate() {
+    //     requestAnimationFrame( animate );
+    //     thisrender.render( scene, camera );
+    // },
+    
 	
 	resize: function resize(inWidth, inHeight) {
 		this.ms_Camera.aspect =  inWidth / inHeight;
