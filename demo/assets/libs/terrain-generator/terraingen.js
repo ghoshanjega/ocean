@@ -93,6 +93,7 @@ var TERRAINGEN =
 	
 	ConstructTerrain: function( inNoise, inParameters )
 	{		
+		// console.log(inNoise);
 		// Create the corresponding geometry
 		var geometry = this.CreateGeometry( inNoise, inParameters.depth, inParameters.width, inParameters.height, inParameters.widthSegments, inParameters.heightSegments );
 		
@@ -149,7 +150,6 @@ var TERRAINGEN =
 		{
 			inParameters.filter[i].Apply( noise, inParameters );
 		}
-		
 		return noise;
 	},
 	
@@ -164,7 +164,6 @@ var TERRAINGEN =
 		var noise = this.CreateCanvas( inWidth, inHeight );
 		var imageData = inCanvas.getContext("2d").getImageData( inX, inY, inWidth, inHeight );
 		noise.getContext("2d").putImageData( imageData, 0, 0, 0, 0, inWidth, inHeight );
-		
 		var scaleWidth = inWidth / inParameters.widthSegments;
 		var scaleHeight = inHeight / inParameters.heightSegments;
 		var parameters = Object.create( inParameters );
