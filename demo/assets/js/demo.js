@@ -11,9 +11,53 @@ var DEMO = {
 	mixers: [],
 	loader: null,
 	ghoshan: null,
-	ghoshan_object: null,
+	super_models: null,
 	clock: new THREE.Clock(),
 	terrain: null,
+	all_models_loaded: false,
+
+	models: {
+		harshit_model: {
+			name: "harshit",
+			obj: null,
+			position: null,
+			file: 'assets/img/Pink-lookaround.fbx',
+			mixers: [],
+			sitting: false
+		},
+		emily_model: {
+			name: "emily",
+			obj: null,
+			position: null,
+			file: 'assets/img/Emilt.fbx',
+			mixers: [],
+			sitting: false
+		},
+		alberto_model: {
+			name: "alberto",
+			obj: null,
+			position: null,
+			file: 'assets/img/Alberto.fbx',
+			mixers: [],
+			sitting: false
+		},
+		ghoshan_model: {
+			name: "ghoshan",
+			obj: null,
+			position: null,
+			file: 'assets/img/Typing.fbx',
+			mixers: [],
+			sitting: true
+		},
+		xavier_model: {
+			name: "xavier",
+			obj: null,
+			position: null,
+			file: 'assets/img/Xavier.fbx',
+			mixers: [],
+			sitting: false
+		},
+	},
 
 	enable: (function enable() {
 		try {
@@ -33,9 +77,9 @@ var DEMO = {
 		this.ms_Canvas.html(this.ms_Renderer.domElement);
 		this.ms_Scene = new THREE.Scene();
 
-		this.ghoshan_object = new THREE.Object3D();
-		this.ms_Scene.add(this.ghoshan_object);
-		
+		this.super_models = new THREE.Group();
+		this.ms_Scene.add(this.super_models);
+
 
 		this.ms_Camera = new THREE.PerspectiveCamera(55.0, WINDOW.ms_Width / WINDOW.ms_Height, 0.5, 30000);
 		this.ms_Camera.position.set(0, Math.max(inParameters.width * 1.5, inParameters.height) / 20, -inParameters.height / 2);
@@ -47,11 +91,18 @@ var DEMO = {
 		this.ms_Scene.add(axes);
 
 		// Initialize Orbit control		
-		this.ms_Controls = new THREE.OrbitControls(this.ms_Camera, this.ms_Renderer.domElement);
-		this.ms_Controls.userPan = false;
-		this.ms_Controls.userPanSpeed = 0.0;
-		this.ms_Controls.maxDistance = 5000.0;
-		this.ms_Controls.maxPolarAngle = Math.PI * 0.495;
+		// this.ms_Controls = new THREE.OrbitControls(this.ms_Camera, this.ms_Renderer.domElement);
+		// this.ms_Controls.userPan = false;
+		// this.ms_Controls.userPanSpeed = 0.0;
+		// this.ms_Controls.maxDistance = 5000.0;
+		// this.ms_Controls.maxPolarAngle = Math.PI * 0.495;
+
+		this.ms_Controls = new THREE.FlyControls(this.ms_Camera);
+		this.ms_Controls.movementSpeed = 1000;
+		this.ms_Controls.domElement = this.ms_Renderer.domElement;
+		this.ms_Controls.rollSpeed = Math.PI / 4;
+		this.ms_Controls.autoForward = false;
+		this.ms_Controls.dragToLook = false;
 
 		// Add sun
 		var directionalLight = new THREE.DirectionalLight(0xffff55, 1);
@@ -68,14 +119,6 @@ var DEMO = {
 		sun.position.set(0, 500, 3000);
 		this.ms_Scene.add(sun);
 
-
-		// sun.shadow.mapSize.width = 512;  // default
-		// sun.shadow.mapSize.height = 512; // default
-		// sun.shadow.camera.near = 0.5;       // default
-		// sun.shadow.camera.far = 500;
-
-
-
 		var spriteMaterial = new THREE.SpriteMaterial(
 			{
 				map: new THREE.ImageUtils.loadTexture('../assets/glow.png'),
@@ -88,9 +131,6 @@ var DEMO = {
 
 		// Create terrain
 		this.loadTerrain(inParameters);
-
-		// Create the models
-		this.loadModels(inParameters);
 
 		// Load textures		
 		var waterNormals = new THREE.ImageUtils.loadTexture('../assets/img/waternormals.jpg');
@@ -116,7 +156,15 @@ var DEMO = {
 		aMeshMirror.rotation.x = - Math.PI * 0.5;
 		this.ms_Scene.add(aMeshMirror);
 
-		// this.loadSkyBox();
+		this.loadSkyBox();
+
+		//Find positions for the models
+		this.set_model_position(inParameters, this.models);
+
+		// Create the models
+		// this.loadModels(inParameters, this.models.ghoshan_model);
+		// this.loadModels(inParameters, this.models.harshit_model);
+		// this.loadModels(inParameters, this.models.emily_model);
 	},
 
 	loadSkyBox: function loadSkyBox() {
@@ -149,44 +197,62 @@ var DEMO = {
 		this.ms_Scene.add(aSkybox);
 	},
 
-	loadModels: function loadModels(inParameters) {
+	set_model_position: function set_model_position(inParameters, models) {
+		var number_of_models = Object.keys(models).length;
+		console.log(number_of_models);
+		var id;
+		for (var key in models) {
+			console.log(models[key]);
+			do {
+				id = Math.floor(Math.random() * 60000) + 1;
+				models[key].position = new THREE.Vector3(DEMO.terrain.geometry.vertices[id].x, DEMO.terrain.geometry.vertices[id].y - inParameters.depth * 0.4, DEMO.terrain.geometry.vertices[id].z);
+				// console.log(DEMO.models.ghoshan_model.position.y);
+			}
+			while (models[key].position.y < 50);
+			console.log(models[key].name,"location added");
+
+			DEMO.loadModels(inParameters, models[key]);
+		}
+	},
+
+	loadModels: function loadModels(inParameters, model) {
+		console.log(model.position);
 		var loader = new THREE.FBXLoader();
-		this.ghoshan = null;
-		loader.load('assets/img/Typing.fbx', function (object) {
-			// console.log(new THREE.AnimationMixer(object));
-			// object.mixer = new THREE.AnimationMixer(object);
-			// DEMO.mixers.push(object.mixer);
-			// var action = object.mixer.clipAction(object.animations[0]);
-			// action.play();
+		loader.load(model.file, function (object) {
+			object.mixer = new THREE.AnimationMixer(object);
+			DEMO.mixers.push(object.mixer);
+			// model.mixers.push(object.mixer);
+			var action = object.mixer.clipAction(object.animations[0]);
+			action.play();
 			object.traverse(function (child) {
 				if (child.isMesh) {
 					child.castShadow = true;
 					child.receiveShadow = true;
 				}
 			});
-			object.scale.set(0.3, 0.3, 0.3);
+			// object.scale.set(0.3, 0.3, 0.3);
 			object.position.set(0, 0, 0);
 			// this.ms_Scene.add(object);
 			// object.rotation.x = (Math.PI / 2);
 
+
+
+			// DEMO.super_models.add(object);
+			DEMO.ms_Scene.add(object);
+			model.obj = object;
+			console.log(model.obj);
+			// var id = 28128;
+			// console.log(DEMO.terrain.geometry.vertices[id]);
+			// DEMO.ghoshan.position.set(DEMO.terrain.geometry.vertices[id].x, DEMO.terrain.geometry.vertices[id].y - inParameters.depth * 0.4, DEMO.terrain.geometry.vertices[id].z);
+			if (model.sitting)
+				model.position.y -= 5;
+			model.obj.position.copy(model.position);
 			
-
-			DEMO.ghoshan_object.add(object);
-			DEMO.ghoshan = object;
-			var id = 28128;
-			console.log(DEMO.terrain.geometry.vertices[id]);
-			DEMO.ghoshan.position.set(DEMO.terrain.geometry.vertices[id].x, DEMO.terrain.geometry.vertices[id].y - inParameters.depth * 0.4, DEMO.terrain.geometry.vertices[id].z);
-			DEMO.ghoshan.callback = function () { window.open("http://www.filesdnd.com"); }
-			DEMO.ms_Clickable.push(DEMO.ghoshan);
-			console.log(DEMO.ms_Clickable);
+			// console.log(model.obj.position);
+			// DEMO.ghoshan.callback = function () { window.open("http://www.filesdnd.com"); }
+			// DEMO.ms_Clickable.push(DEMO.ghoshan);
+			// console.log(DEMO.ms_Clickable);
 		});
-
-		// console.log(this.terrain.geometry.vertices[0]);
-		// for (var yv=30000; yv<DEMO.terrain.geometry.vertices.length ; yv++){
-		// 	if(DEMO.terrain.geometry.vertices[yv].x>0)
-		// 		break;
-		// 	console.log(this.terrain.geometry.vertices[yv].x, yv);
-		// }
 
 
 	},
@@ -203,13 +269,19 @@ var DEMO = {
 		// var material = new THREE.MeshPhongMaterial({ color: 0xff1200, side: THREE.DoubleSide });
 		// var plane = new THREE.Mesh(terrainGeo, material);
 		// this.ms_Scene.add(plane);
-
-
 	},
 
 	display: function display() {
 		this.ms_Water.render();
 		this.ms_Renderer.render(this.ms_Scene, this.ms_Camera);
+		this.ms_Controls.update(this.clock.getDelta());
+		if (this.mixers.length > 0) {
+			for (var i = 0; i < this.mixers.length; i++) {
+				console.log(i);
+				this.mixers[i].update(this.clock.getDelta());
+
+			}
+		}
 	},
 
 	update: function update() {
@@ -217,14 +289,33 @@ var DEMO = {
 		// 	this.ms_FilesDND.rotation.y += 0.01;
 		// }
 		this.ms_Water.material.uniforms.time.value += 1.0 / 60.0;
-		this.ms_Controls.update();
+		// this.ms_Controls.update();
 		this.display();
+		// if (this.models.ghoshan_model.mixers.length > 0) {
+		// 	for (var i = 0; i < this.models.ghoshan_model.mixers.length; i++) {
+		// 		this.models.ghoshan_model.mixers[i].update(this.clock.getDelta());
+
+		// 	}
+		// }
+		// if (this.models.harshit_model.mixers.length > 0) {
+		// 	console.log("meow");
+		// 	for (var i = 0; i < this.models.harshit_model.mixers.length; i++) {
+		// 		this.models.harshit_model.mixers[i].update(this.clock.getDelta());
+
+		// 	}
+		// }
+		console.log(DEMO.mixers);
 		if (this.mixers.length > 0) {
 			for (var i = 0; i < this.mixers.length; i++) {
+				console.log(i);
 				this.mixers[i].update(this.clock.getDelta());
 
 			}
 		}
+		
+
+		// this.mixers[1].update(this.clock.getDelta());
+		// this.mixers[0].update(this.clock.getDelta());
 
 	},
 
