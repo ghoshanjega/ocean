@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		
+		<title>SEHSUCHT WEBGL ZOETROPE LEVEL 01</title>
+		
+		<meta name="title" content="Sehsucht interactive Zoetrope" />
+		<meta property="og:title" content="Sehsucht interactive Zoetrope" />
+		<meta property="og:site_name" content="Sehsucht interactive Zoetrope"/>
+		
+		<meta property="og:url" content="http://labs.sehsucht.de" />
+		
+		<meta name="description" content="Welcome to the Zoetrope a musical game by SEHSUCHT Berlin" />
+		<meta property="og:description" content="Welcome to the Zoetrope a musical game by SEHSUCHT Berlin" />
+		
+		<meta name="keywords" content="Sehsucht, Berlin, Zeotrope, Music, Game, WebGL, Firefox, Firefox Experiment, Chrome, Chrome Experiment, HTML5, Javascript" />
+		
+		<meta property="og:type" content="website"/>
+		
+		<link rel="image_src" type="image/jpeg" href="http://labs.sehsucht.de/textures/sharing.jpg" />
+		<meta property="og:image" content="http://labs.sehsucht.de/textures/sharing.jpg" />
+		
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
+		
+		<META NAME="ROBOTS" CONTENT="INDEX, NOFOLLOW">
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<style>
+			body {
+				width:100%;
+				height: 100%;
+				background-color: #000;
+				color: #f7e551;
+				font-family: 'Bree Serif', serif;
+				font-size: 20px;
+				cursor:default;
+				margin: 0px;
+			}
+			
+			a {
+				color: #c82951;
+				text-decoration:none;
+			}
+			a:hover,a.hover {
+				cursor:pointer;
+			}
+			
+			#bgContainer {
+			    width: 100%; 
+			    height: 100%; 
+			    position: fixed; 
+			    left: 0px; 
+			    top: 0px; 
+			    z-index: -2;
+			}
+			
+			#bg {
+			    width:100%;
+			    height:100%;
+			}
+			
+			#progress {
+				display: inline-block;
+			    width: 0; 
+			    height: 10px;
+				background: #333;
+			    position: fixed; 
+			    left: 0px; 
+			    top: 0px; 
+			    z-index: 999;
+			}
+			
+			#logoContainer {
+				position: fixed;
+				top:50%;
+				left:50%;
+			}
+			
+			#logo {
+				position: absolute;
+				right:-250px;
+				top:-250px;
+			}
+			
+			#pointsContainer {
+				position: fixed;
+				right:30px;
+				bottom:30px;
+				width:380px;
+				height:120px;
+				background-color: #333;
+				z-index: 994;
+			}
+			
+			#points {
+				text-align: right;
+				padding:0 20px 10px 15px;
+				margin:0;
+			}
+			
+			#creditsLinkContainerLeft {
+				display: none;
+				position: fixed;
+				left:30px;
+				bottom:30px;
+			}
+			
+			#creditsLinkContainerRight {
+				position: fixed;
+				right:30px;
+				bottom:30px;
+			}
+			#creditsLinkContainer {
+				background-color: #333;
+				float: right;
+			}
+
+			#creditsLink {
+				text-align: right;
+				padding:0 10px 5px 10px;
+				margin:0;
+			}
+			
+			.lookInstrContainer {
+				position: fixed;
+				left:30px;
+				bottom:30px;
+			}
+
+			.lookInstr {
+				position: relative;
+				text-align: left;
+				padding:0 10px 5px 10px;
+				margin:0;
+				background-color: #333;
+			}
+			
+			#instructionsContainer {
+				display: none;
+				position: fixed;
+				text-align: center;
+				bottom: 114px;
+				left: 0;
+				width:100%;
+			}
+					
+			#instructionsContainer2 {
+				display: none;
+				position: fixed;
+				text-align: center;
+				bottom: 80px;
+				left: 0;
+				width:100%;
+			}
+			
+			#instructions {
+				display: inline-block;
+				font-size: 20px;
+				text-align: center;
+				background-color: #333;
+				padding:0 10px 4px 10px;
+				margin: 0;
+				cursor:default;
+			}
+					
+			.centeredTextContainer {
+				position: fixed;
+				text-align: center;
+				top: 50%;
+				left: 0;
+				width:100%;
+			}
+			
+			.centeredText {
+				display: inline-block;
+				position: relative;
+				text-align: center;
+				padding:0;
+				margin: 0;
+			}
+			
+			.mediumFont {
+				font-size: 50px;
+			}
+			
+			.centeredDivContainer {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+			}
+			
+			.greyBox {
+				position: absolute;
+				background-color: #333;
+			}
+					
+			#etagen {
+				position: fixed;
+				z-index: 997;
+				right:15px;
+				bottom:146px;
+			}	
+					
+			#noWebGl, #logoContainer, #lookOrPlay, #lookOrPlay, #playInstr, #look, #playing, #markerStuff, #etage02, #lookUnlocked {
+			/*#enter, #noWebGl, #logoContainer, #lookOrPlay, #lookOrPlay, #look, #playing, #markerStuff, #etage02, #lookUnlocked {*/
+				display: none;
+			}
+			
+			
+			#lost {
+				position: relative;
+				display: none;
+				z-index: 996;
+			}
+			
+			#won {
+				position: relative;
+				display: none;
+				z-index: 995;
+			}
+			
+			#credits {
+				position: relative;
+				z-index: 998;
+				display: none;
+			}
+			#creditsText {
+				background-color: #333333;
+				font-size: 12px;
+				height: 515px;
+				padding: 7px 12px 0;
+				text-align: left;
+				top: -250px;
+			}
+			#webGlContainer {
+				z-index: -1; 
+				position: fixed;
+			}
+			.sharingButton {
+				margin-right: 2px;
+				margin-top: 0;
+				display: block;
+				float: right;
+				background-color:#333;
+			}			
+			
+
+			.noWebGlSharingButton {
+				display: block;
+				float: right;
+				margin: 20px 2px 0 0;
+			}
+
+			#browsers{
+				position:fixed;
+				bottom:25px;
+				left:30px;
+			}
+			#fwa{
+				position:fixed;
+				top:0px;
+				left:0px;
+			}
+			.marker {
+				position: fixed;
+				width:4px;
+				height:120px;
+				bottom:30px;
+			}
+			#fixedMarker {
+				right:410px ;
+				z-index: 993;
+				background-color: #c82951;
+			}
+			.importantMarker {
+				z-index: 992;
+				bottom:50px;
+				height:80px;
+				background-color: #f7e551;
+			}
+			.barMarker {
+				z-index: 991;
+				width:2px;
+				background-color: #4d4d4d;
+			}			
+			.importantBarMarker {
+				z-index: 991;
+				width:2px;
+				background-color: #9a9a9a;
+			}
+			
+			#timelineLogo {
+				position:fixed;
+				z-index: 994;
+				left:30px;
+				bottom:30px; 
+			}
+			
+			.highlight {
+				color: #ffffff;
+			}
+			
+			
+			.enterGifContainer {
+				margin: auto;
+				max-width: 734px;
+				position: relative;
+				width: 100%;
+				z-index: 300;
+			}
+
+			.enterGif {
+				background-image: url("textures/Frau.gif");
+				background-position: right bottom;
+				background-repeat: no-repeat;
+				height: 325px;
+				position: relative;
+				right: 0;
+				width: 100%;
+			}
+			
+			.enterContainer {
+				position:relative; 
+				max-width:630px; 
+				width:100%; 
+				margin: -26px auto 30px; 
+				padding: 40px 0 0 0; 
+				background-color:#333; 
+				z-index:200
+			}
+			
+			.enterContent { 
+				padding: 20px 20px 70px 20px;
+			}
+			
+			.enterText {
+				text-align: center;
+				padding: 0;
+				margin: 0;
+			}			
+						
+			.smallFont {
+				font-size: 12px;
+				text-align:left;
+			}
+			
+			.videoWrapper {
+				position: relative;
+				padding-bottom: 62.5%; /*=16:10, 56.25%=16:9 */
+				margin: 40px 0;
+				height: 0;
+			}
+			
+			.videoWrapper iframe {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+			
+			.enterBrowserContainer { 
+				position:relative; 
+				max-width:600px; 
+				width:100%; 
+				margin: 0 auto 30px; 
+				padding: 0 ;
+			}
+			
+			.enterBrowserImage{ 
+				position:relative; 
+				left:30px;
+			}
+
+			.noWebGlSharingContainer {
+				height: 30px;
+				margin: 40px 0 20px;
+			}
+			
+			.bigFont {
+				font-size: 80px;
+				padding-bottom:10px;
+			}
+			
+			#instructionContent {
+				background-color: #333333;
+				left: -50%;
+				padding: 15px 20px 30px;
+				position: relative;
+				top: -200px;
+			}
+			
+			#playInstr {
+				left: 50%;
+				position: fixed;
+				top: 50%;
+				width: 650px;
+				cursor: w-resize;
+			}
+			
+			#mouseIllu {
+				background-image: url("textures/mouse_illu.png");
+				background-repeat: no-repeat;
+				height: 117px;
+				left: -239px;
+				position: relative;
+				top: -240px;
+				width: 478px;
+			}
+			
+			#mtvLogo {
+				position: fixed;
+				right: 30px;
+				top: 30px;
+			}
+			
+		
+			@media only screen and (max-width: 640px) {
+			
+				.enterGif {
+					height: 225px;
+				}				
+				
+				.enterContainer {
+					padding:0
+				}				
+				
+				.mediumFont {
+					line-height: 43px;
+				}
+				
+				#mtvLogo {
+					display: none;
+				}
+								
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div id="bgContainer">
+		    <img src="textures/BG.png" id="bg" alt="" />
+		</div>		
+		<div id="mtvLogo">
+		    <img src="textures/MTV.png" alt="" />
+		</div>
+		
+		
+		
+		<div id="noWebGl">
+			<div class="enterGifContainer">
+				<div class="enterGif">
+				</div>				
+			</div>		
+			<div class="enterContainer">
+				<div class="enterContent">		
+					<p class="enterText">
+						Welcome to the
+					</p>
+					<p class="enterText mediumFont">
+						ZOETROPE
+					</p>	
+					<p class="enterText">
+						a musical game by <span style="WHITE-SPACE: nowrap">Sehsucht Berlin</span></br></br>
+						Unfortunately, either your graphics card</br>
+						or your browser does not support WebGL.</br></br>
+						Please try the latest <a href="http://www.google.com/chrome/">Google Chrome</a> or <a href="http://www.mozilla.org">Mozilla Firefox</a>,</br>
+						or watch this video of the experiment.
+					</p>				
+					<div class="videoWrapper">
+						<iframe src="http://player.vimeo.com/video/55381708" width="100%" height="100%" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>				
+					</div>				
+					<p class="enterText">
+						Credits</br></br>
+					</p>
+					<p class="enterText smallFont">
+						</br>
+						Courtesy of Milan Design Studio for MTV EMA 2012
+						</br>	
+						</br>
+						<a href="http://vimeo.com/53282354" target="_blank">ORIGINAL MTV EMA ZOETROPE</a></br>
+						</br>
+						Production Company: <a href="http://www.sehsucht.de/" target="_blank">Sehsucht Berlin GmbH</a> &amp; Co KG, Berlin/Germany</br>
+						Director: Mate Steinforth</br>
+						Artists: Remo Gambacciani, Helge Kiehl, Florian Panzer, David Weidemann, Christian Zschunke</br>
+						Producer: Christina Geller, Christian Jacks</br>
+						Music: Nikolai von Sallwitz, Sound Architecture</br>
+						</br>
+						Client &amp; Lead Creative Direction: VIMN MTV World Design Studio, Milan/Italy</br>
+						Creative Director: Roberto Bagatti</br>
+						Associate Creative Director: Anna Caregnato</br>
+						Senior Designer: Giorgio Schwarz</br>
+						Art Director: James Walpole/Carlos Carrasco</br>
+						Senior Producer: Cristina Mazzocca</br>
+						Coordinator: Beatrice Cardile</br>
+						</br>
+						</br>
+						INTERACTIVE LOWPOLY VERSION</br>
+						</br>
+						Interaction design and programming: David Weidemann </br>
+						Modeling: Remo Gambacciani, David Weidemann</br>
+						Textures: Helge Kiehl, Remo Gambacciani, David Weidemann</br>
+						</br>
+						This site uses the great <a href="http://mrdoob.github.com/three.js/" target="_blank">Three.js</a> WebGL framework</br>
+						and  <a href="http://www.schillmania.com/projects/soundmanager2/" target="_blank">Soundmanager2</a> to embed sounds 
+					</p>
+					<div id="noWebGlSharingContainer">	
+						<a href="http://www.facebook.com/sharer.php?u=http://labs.sehsucht.de/" onclick="window.open(this.href, \'mywin\',\'left=20,top=20,width=500,height=500,toolbar=1,resizable=0\'); return false;" >
+							<img src="textures/facebook.png" alt="" class="noWebGlSharingButton"/>
+						</a>
+						<a href="http://twitter.com/share?text=Welcome%20to%20the%20Zoetrope%20a%20musical%20game%20by%20SEHSUCHT%20Berlin%20http%3A%2F%2Flabs.sehsucht.de%20%23zoetrope%20%23webgl%20%23sehsucht" onclick="window.open(this.href, \'mywin\',\'left=20,top=20,width=500,height=500,toolbar=1,resizable=0\'); return false;" >
+							<img src="textures/twitter.png" alt="" class="noWebGlSharingButton" />
+						</a>
+					</div>				
+				</div>
+			</div>		
+			<div class="enterBrowserContainer">
+				<img src="textures/browsers.png" alt="" class="enterBrowserImage"/>							
+			</div>
+			<img src="textures/DayTopLeft.png" alt="" id="fwa" />
+		</div>
+		
+		
+		
+		<div id="enter">
+			<div class="enterGifContainer">
+				<div class="enterGif">
+				</div>				
+			</div>		
+			<div class="enterContainer">
+				<div class="enterContent" style="padding: 20px 20px 10px;">		
+					<p class="enterText">
+						Welcome to the
+					</p>
+					<p class="enterText mediumFont">
+						ZOETROPE
+					</p>	
+					<p class="enterText">
+						a musical game by <span style="WHITE-SPACE: nowrap">Sehsucht Berlin</span></br>
+						spin the zoetrope to the beat of the music to level up
+					</p>					
+					<p class="enterText bigFont">
+						<a id="enter-action">ENTER</a>
+					</p>				
+					<p class="enterText">
+						This game needs a modern browser and quite some bandwidth,</br>
+						processor and graphics card preformance. To enhance your</br>
+						experience, please close other tabs and programs.
+					</p>
+					<div class="videoWrapper">
+						<iframe src="http://player.vimeo.com/video/55381708" width="100%" height="100%" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>				
+					</div>						
+				</div>
+			</div>				
+			<img src="textures/browsers.png" alt="" id="browsers" />
+			<img src="textures/DayTopLeft.png" alt="" id="fwa" />
+		</div>
+		
+		<div id="logoContainer">
+			<img src="textures/SesuLogo.png" id="logo" alt="" />
+		</div>
+		<div id="progress"></div>
+		
+		<div id="lookOrPlay">
+			<div class="centeredDivContainer">
+				<div class="greyBox" style="height:220px; top:-110px; width: 650px; right:-325px;"></div>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText" style="top:-100px;">
+					level 01
+				</p>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText bigFont" style="top:-100px;">
+					<a id="takeALook-action">TAKE A LOOK</a>
+				</p>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText" style="top:-10px;">
+					or
+				</p>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText bigFont" style="top:-10px;">
+					<a id="playTheGame-action">PLAY THE GAME</a>
+				</p>
+			</div>
+		</div>
+			
+	
+		<div id="playInstr">	
+			<div id="instructionContent">		
+				<p class="enterText mediumFont">
+					HOW TO PLAY
+				</p>				
+				<p class="enterText">
+					turn your speakers on.</br>
+					<span class="highlight">click and drag</span> the mouse fast to <span class="highlight">spin the zoetrope.</span></br>
+					spin it to the <span class="highlight">beat of the music.</span></br>
+					the <span class="highlight">markings</span> in the timeline show you the right beat.
+				</p>				
+				<p class="enterText" style="font-size:12px; padding: 14px;">
+					if dragging the mouse seems to hard you can try using your mousewheel instead.
+				</p>				
+				<p class="enterText">
+					SPIN THE ZOETROPE TO START
+				</p>				
+			</div>
+				<div id="mouseIllu"></div>			
+		</div>
+		
+		
+		<div id="markerStuff">
+			<div class="greyBox" id="timeline1" style="height:120px; bottom:30px; width: 50%; right:30px;"></div>
+			<div class="greyBox" id="timeline2" style="height:120px; bottom:30px; width: 50%; left:90px;"></div>
+			<div class="marker" id="fixedMarker"></div>
+			<img src="textures/SesuLogoTimeline.png" id="timelineLogo" alt=""/>
+		</div>
+
+		<div id="playing">
+			<div id="pointsContainer">
+				<p class="bigFont" id="points">+0000000</p>
+			</div>
+			<div id="etagen">
+				<img src="textures/etagen_01.png" id="etage01" alt="" usemap="#chaptermap"/>
+				<img src="textures/etagen_02.png" id="etage02" alt="" usemap="#chaptermap"	/>
+				<map name="chaptermap" id="chaptermap">
+				</map> 
+			</div>
+		</div>
+		
+		<div id="won">
+			<div class="centeredDivContainer">
+				<div class="greyBox" style="height:140px; top:-70px; width: 460px; right:-230px;"></div>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText bigFont" style="top:-80px;">
+					YOU ROCK!
+				</p>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText" style="top:22px;">
+					<a id="won-LevelUp-action">LEVEL UP</a>
+					&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
+					<a id="won-PlayAgain-action">PLAY AGAIN</a>
+					&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
+					<a id="won-TakeALook-action">TAKE A LOOK</a>
+				</p>
+			</div>
+		</div>
+		
+		<div id="lost">
+			<div class="centeredDivContainer">
+				<div class="greyBox" style="height:140px; top:-70px; width: 440px; right:-220px;"></div>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText bigFont" style="top:-80px;">
+					YOU LOST!
+				</p>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText" style="top:22px;">
+					<a id="lost-TryAgain-action">TRY AGAIN</a>
+					&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;
+					<a id="lost-TakeALook-action">TAKE A LOOK</a>
+				</p>
+			</div>
+		</div>
+
+		<div id="look">
+			<div class="lookInstrContainer">
+				<p class="lookInstr" style="top:-70px;">
+					<span class="highlight">drag</span> the mouse <span class="highlight">or</span> use the <span class="highlight">mouse wheel</span> to spin the zoetrope				
+				</p>
+			</div>
+			<div class="lookInstrContainer">
+				<p class="lookInstr" style="top:-35px;">
+					<span class="highlight">drag</span> the mouse while pressing <span class="highlight">1</span> to pan, <span class="highlight">2</span> to zoom and <span class="highlight">3</span> to rotate the camera
+				</p>
+			</div>
+			<div class="lookInstrContainer" id="lookLocked">
+				<p class="lookInstr">
+					<a id="looking-Play-action">play</a> the game to unlock further levels
+				</p>
+			</div>			
+			<div class="lookInstrContainer" id="lookUnlocked">
+				<p class="lookInstr">
+					<a id="looking-LevelUp-action">level up</a>
+					or
+					<a id="looking-PlayAgain-action">play again</a>
+ 				</p>
+			</div>
+		</div>
+		
+		<div id="creditsLinkContainerLeft">
+			<div id="creditsLinkContainer">
+				<p id="creditsLink">
+					<a id="credits-action1">credits</a>
+				</p>
+			</div>
+			<a href="http://www.facebook.com/sharer.php?u=http://labs.sehsucht.de/" onclick="window.open(this.href, 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" ><img src="textures/facebook.png" alt="" class="sharingButton" /></a>
+			<a href="http://twitter.com/share?text=Welcome%20to%20the%20Zoetrope%20a%20musical%20game%20by%20SEHSUCHT%20Berlin%20http%3A%2F%2Flabs.sehsucht.de%20%23zoetrope%20%23webgl%20%23sehsucht" onclick="window.open(this.href, 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" ><img src="textures/twitter.png" alt="" class="sharingButton" /></a>
+		</div>
+		
+		<div id="creditsLinkContainerRight">
+			<div id="creditsLinkContainer">
+				<p id="creditsLink">
+					<a id="credits-action2">credits</a>
+				</p>
+			</div>
+			<a href="http://www.facebook.com/sharer.php?u=http://labs.sehsucht.de/" onclick="window.open(this.href, 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" ><img src="textures/facebook.png" alt="" class="sharingButton" /></a>
+			<a href="http://twitter.com/share?text=Welcome%20to%20the%20Zoetrope%20a%20musical%20game%20by%20SEHSUCHT%20Berlin%20http%3A%2F%2Flabs.sehsucht.de%20%23zoetrope%20%23webgl%20%23sehsucht" onclick="window.open(this.href, 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" ><img src="textures/twitter.png" alt="" class="sharingButton" /></a>
+		</div>
+		
+		<div id="credits" >
+			<div class="centeredTextContainer">
+				<p class="centeredText" id="creditsText">
+				Courtesy of Milan Design Studio for MTV EMA 2012
+				</br>
+				</br>
+				<a href="http://vimeo.com/53282354" target="_blank">ORIGINAL MTV EMA ZOETROPE</a></br>
+				</br>
+				Production Company: <a href="http://www.sehsucht.de/" target="_blank">Sehsucht Berlin GmbH</a> &amp; Co KG, Berlin/Germany</br>
+				Director: Mate Steinforth</br>
+				Artists: Remo Gambacciani, Helge Kiehl, Florian Panzer, David Weidemann, Christian Zschunke</br>
+				Producer: Christina Geller, Christian Jacks</br>
+				Music: Nikolai von Sallwitz, Sound Architecture</br>
+				</br>
+				Client &amp; Lead Creative Direction: VIMN MTV World Design Studio, Milan/Italy</br>
+				Creative Director: Roberto Bagatti</br>
+				Associate Creative Director: Anna Caregnato</br>
+				Senior Designer: Giorgio Schwarz</br>
+				Art Director: James Walpole/Carlos Carrasco</br>
+				Senior Producer: Cristina Mazzocca</br>
+				Coordinator: Beatrice Cardile</br>
+				</br>
+				</br>
+				INTERACTIVE LOWPOLY VERSION</br>
+				</br>
+				Interaction design and programming: David Weidemann </br>
+				Modeling: Remo Gambacciani, David Weidemann</br>
+				Textures: Helge Kiehl, Remo Gambacciani, David Weidemann</br>
+				</br>
+				This site uses the great <a href="http://mrdoob.github.com/three.js/" target="_blank">Three.js</a> WebGL framework</br>
+				and  <a href="http://www.schillmania.com/projects/soundmanager2/" target="_blank">Soundmanager2</a> to embed sounds 
+				</p>
+			</div>
+			<div class="centeredTextContainer">
+				<p class="centeredText" style="top:227px;">
+					<a id="credits-Close-action">CLOSE</a>
+				</p>
+			</div>
+		</div>
+		
+
+		<script src="js/three.min.js"></script>
+		<script src="js/OBJLoader.js"></script>
+		
+		<script src="js/TrackballControls2.js"></script>
+
+		<script src="js/Detector.js"></script>
+		
+		<script src="js/soundmanager2-nodebug-jsmin.js"></script>
+		
+		<script>
+				
+			document.getElementById("credits-Close-action").onmousedown = function() {
+				hideCssElements('credits');
+			};
+			document.getElementById("credits-action1").onmousedown = document.getElementById("credits-action2").onmousedown = function() {
+				showCssElements('credits');
+				// console.log("cameras.push({ time: 00, position: new THREE.Vector3 ("+camera.position.x+","+camera.position.y+","+camera.position.z+"), lookAt: new THREE.Vector3 ("+controls.target.x+","+controls.target.y+","+controls.target.z+") });");
+			};
+					
+			if ( Detector.webgl ) {
+			
+				//Listener EnterButton
+				document.getElementById("enter-action").onmousedown = function() {
+					showCssElements('logoContainer');
+					document.body.removeChild(document.getElementById('enter'));
+					document.body.style.overflow = "hidden";
+					enter(); 
+				};
+				
+				//Vars			
+				var container;
+
+				var camera, controls, scene, group, backgroundPivot, background, backgroundHeight, renderer;
+				
+				var mouseDown = false;
+				var lastMousePosition;
+				var mouseSpeed = 0;
+				var targetRotation = 0;
+				
+				var lastFrameTime = Date.now();
+				
+				var loadedLoaders = 0;
+				var totalLoaders = 0;
+
+				var blink = false;
+				var lastBlink = Date.now();
+				
+				var pointLimit = 500000;
+				
+				var textures = new Array();
+				
+				
+				//Musikgame
+				var beats = new Array(4000,6000,8000,10000,11000,12000,14000,16000,18000,19000,20000,22000,24000,25000,26000,27000); // in milliseconds
+				// var beats = new Array(4000,5000,6000,7000,8000,8500,9000,9500,10000,10500,11000,11500,12000,13000,14000,15000,16000,16500,17000,18000,19000,20000,20500,21000,22000,23000,24000,24500,25000,25500,26000,26500,27000,27500); // in milliseconds
+				var musicLength = 29000; // in milliseconds
+				var markerDelay = 4000;	// how long will the markers be visible 
+				var accuracy = 250; // with which the user has to play in milliseconds 
+				var maxMissedBeats = 7; // number of missed beats in one row/without good hits to recover
+				var pointMulti = 750; //hit Beats times this = points
+				
+				var cameras = new Array();
+				cameras.push({ time: 0000, position: new THREE.Vector3 (275.05977506777737,91.68659168925916,0), lookAt: new THREE.Vector3 (0,0,0) });
+				cameras.push({ time: 8000, position: new THREE.Vector3 (174.16986353880142,62.57921857335351,10.13273223120365), lookAt: new THREE.Vector3 (-0.02206219243437855,60.33974557249558,8.582961960502967) });
+				cameras.push({ time: 12000, position: new THREE.Vector3 (124.49263314156705,41.396813841928655,9.7367969918648), lookAt: new THREE.Vector3 (205.2066829121501,-20.36566785551984,-57.96867772313468) });
+				cameras.push({ time: 16000, position: new THREE.Vector3 (94.71539799534723,34.20231641284124,181.50562412362956), lookAt: new THREE.Vector3 (67.15700057940845,34.26120460836828,63.69353709351823) });
+				cameras.push({ time: 20000, position: new THREE.Vector3 (204.70579286969826,151.03646994768727,116.3274055038001), lookAt: new THREE.Vector3 (56.73876552537582,16.801270943115444,28.874175385651277) });
+				
+				var marker = new Array(), barCounter, lastMouseWheelActionTime=Date.now(), dragToStart=false, averageWheelSpeed=0, wheelEventsCounter=0, addedWheelSpeed=0, lookMode, gameStarted, previousScore, currentBeat, nextCamera, markedBeats, hitBeats, lastHitBeat, missedBeats=0, basisRotationSpeed = 0, checkMouseBeat = false;
+				var browser = detectBrowser(); lastWheelSpeed=0; touchpadAndFirefox=false;
+			}
+			
+			else { //no WebGL
+				
+				document.getElementById( "enter" ).style.display = 'none';
+				document.getElementById( "creditsLinkContainerRight" ).style.display = 'none';
+				
+				document.getElementById( "noWebGl" ).style.display = 'inline';
+				
+				document.body.style.overflow = "auto";
+				
+			}
+			
+			function enter() {
+						
+				init();
+				animate();
+				
+			}
+
+
+			function init() {
+				
+				previousScore = 0; 
+				
+				loadSounds();
+
+				container = document.createElement( 'div' );
+				container.id = "webGlContainer";
+				document.body.appendChild( container );
+				
+				//Scene
+				scene = new THREE.Scene();
+
+				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position = new THREE.Vector3(cameras[0].position.x,cameras[0].position.y,cameras[0].position.z) ;
+						
+				controls = new THREE.TrackballControls2( camera );
+				controls.addEventListener( 'change', render );
+				controls.target = new THREE.Vector3(cameras[0].lookAt.x,cameras[0].lookAt.y,cameras[0].lookAt.z) ;
+
+				
+				//Environment
+				var r = "textures/";
+				var urls = [ r + "chapter01_px.jpg", r + "chapter01_nx.jpg",
+							 r + "chapter01_py.jpg", r + "chapter01_ny.jpg",
+							 r + "chapter01_pz.jpg", r + "chapter01_nz.jpg" ];
+
+				var chapter01TextureCube = THREE.ImageUtils.loadTextureCube( urls );
+				
+				var urls = [ r + "hihat_px.jpg", r + "hihat_nx.jpg",
+							 r + "hihat_py.jpg", r + "hihat_ny.jpg",
+							 r + "hihat_pz.jpg", r + "hihat_nz.jpg" ];
+
+				var hihatTextureCube = THREE.ImageUtils.loadTextureCube( urls );
+				
+				var urls = [ r + "char_px.jpg", r + "char_nx.jpg",
+							 r + "char_py.jpg", r + "char_ny.jpg",
+							 r + "char_pz.jpg", r + "char_nz.jpg" ];
+
+				var CharTextureCube = THREE.ImageUtils.loadTextureCube( urls );
+				
+				var urls = [ r + "blurry_px.jpg", r + "blurry_nx.jpg",
+							 r + "blurry_py.jpg", r + "blurry_ny.jpg",
+							 r + "blurry_pz.jpg", r + "blurry_nz.jpg" ];
+
+				var blurryTextureCube = THREE.ImageUtils.loadTextureCube( urls );
+
+				
+				// Backgroundimage
+				backgroundPivot = new THREE.Object3D();
+				backgroundPivot.position = camera.position;
+				backgroundPivot.rotation = camera.rotation;
+				
+				var backgroundTex = getTexture( 'textures/BG.png' );
+				background = new THREE.Sprite( { map:backgroundTex, useScreenCoordinates: false, color: 0xffffff } );
+				background.position.set(  0  ,  0  ,  -1999  );
+				background.scale.set(  1999 * camera.aspect  ,  1999  ,  1  );
+								
+				backgroundPivot.add(background);
+								
+				
+				// Textures and Models
+				group = new THREE.Object3D();//create an empty container
+				scene.add( group );
+				
+				var BaseDrum = getTexture( 'textures/BaseDrumColor.jpg' );
+				var Boden = getTexture( 'textures/BodenColor.jpg' );
+				var MPC = getTexture( 'textures/MPCColor.jpg' );
+				var MPCTyp = getTexture( 'textures/MPCTypColor.jpg' );
+				var MPCTypHaare = getTexture( 'textures/MPCTypHaareColor.jpg' );
+				var Snare = getTexture( 'textures/SnareColor.jpg' );
+				
+				getModelJS( 'objs/CH01/BaseDrum.js' , { color: 0xffffff, map: BaseDrum } );
+				getModelJS( 'objs/CH01/Boden.js' , { color: 0xffffff, map: Boden } );
+				getModelJS( 'objs/CH01/HiHat.js' , { color: 0x121417, envMap: hihatTextureCube, combine: THREE.AddOperation, reflectivity: 1 } );
+				getModelJS( 'objs/CH01/MPC.js' , { color: 0xffffff, map: MPC } );		
+				getModelJS( 'objs/CH01/MPCTyp.js' , { color: 0xffffff, map: MPCTyp, envMap: CharTextureCube, combine: THREE.AddOperation, reflectivity: 0.1 } );
+				getModelJS( 'objs/CH01/MPCTypHaare.js' , { color: 0xffffff, map: MPCTypHaare, envMap: CharTextureCube, combine: THREE.AddOperation, reflectivity: 0.1 } );
+				getModelJS( 'objs/CH01/Snare.js' , { color: 0xffffff, map: Snare } );
+				getModelJS( 'objs/CH01/Metal.js' , { color: 0x121417, envMap: chapter01TextureCube, combine: THREE.AddOperation, reflectivity: 1 } );					
+					
+				//Renderer
+				renderer = new THREE.WebGLRenderer({ antialias: true });
+				renderer.setSize( window.innerWidth, window.innerHeight);
+				renderer.gammaInput = false;
+				renderer.gammaOutput = false;
+				container.appendChild( renderer.domElement );
+								
+				
+				//Listener
+				window.addEventListener( 'resize', onWindowResize, false );
+				window.onbeforeunload = function () { freeMemoryAndGoTo(); };
+				
+				document.getElementById("takeALook-action").onmousedown = function() {
+					showCssElements('look');
+					hideCssElements('lookOrPlay');
+					lookMode=true;
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+					regListeners();
+				};
+				
+				document.getElementById("playTheGame-action").onmousedown = function() {
+					showCssElements('playInstr','playing','markerStuff');
+					hideCssElements('lookOrPlay', 'creditsLinkContainerRight', 'creditsLinkContainerLeft');
+					dragToStart = true; 
+					animateMouseIllu();
+					lookMode=false;
+					regListeners();
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+				
+			}
+			
+			function regListeners() {
+				
+				document.getElementById("playInstr").onmousedown = MouseDownHandler;
+				document.getElementById("playInstr").onmouseup = MouseUpHandler;
+				document.getElementById("playInstr").onmousemove = MouseMoveHandler;
+				
+				container.onmousedown = MouseDownHandler;
+				container.onmouseup = MouseUpHandler;
+				container.onmousemove = MouseMoveHandler;
+				
+				container.onmouseout = MouseUpHandler;
+				
+				container.addEventListener("mousewheel", MouseWheelHandler, false);  
+				container.addEventListener("DOMMouseScroll", MouseWheelHandler, false);  
+				
+				document.getElementById("playInstr").addEventListener("mousewheel", MouseWheelHandler, false);  
+				document.getElementById("playInstr").addEventListener("DOMMouseScroll", MouseWheelHandler, false);  
+								
+				document.getElementById("won-LevelUp-action").onmousedown = 
+				document.getElementById("looking-LevelUp-action").onmousedown = function() {
+					freeMemoryAndGoTo('Chapter02.html');
+				};
+				
+				document.getElementById("won-PlayAgain-action").onmousedown = function() {
+					showCssElements("markerStuff");
+					hideCssElements('won', 'creditsLinkContainerLeft');
+					startGame();
+					removeChaptermapArea();
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+				
+				document.getElementById("won-TakeALook-action").onmousedown = function() {
+					hideCssElements('won', 'etage02', 'playing', 'lookLocked', 'creditsLinkContainerLeft');
+					lookMode=true;
+					blink=false;
+					showCssElements('look', 'etage01', 'lookUnlocked', 'creditsLinkContainerRight'); 
+					removeChaptermapArea();
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+				
+				document.getElementById("lost-TryAgain-action").onmousedown = function() {
+					showCssElements('playInstr','playing','markerStuff');
+					hideCssElements('lost', 'creditsLinkContainerRight', 'creditsLinkContainerLeft');
+					animateMouseIllu();
+					dragToStart = true;
+					checkMouseBeat = false;
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+				
+				document.getElementById("lost-TakeALook-action").onmousedown = function() {
+					hideCssElements('lost', 'etage02', 'playing', 'lookUnlocked', 'creditsLinkContainerLeft'); 
+					lookMode=true; 
+					blink=false; 
+					showCssElements('look', 'etage01', 'lookLocked', 'creditsLinkContainerRight'); 
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+				
+				document.getElementById("looking-Play-action").onmousedown = function() {
+					showCssElements('playInstr','playing','markerStuff');
+					hideCssElements('creditsLinkContainerRight', 'creditsLinkContainerLeft');
+					dragToStart = true;
+					animateMouseIllu();
+					hideCssElements('look'); 
+					lookMode=false;
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+				
+				document.getElementById("looking-PlayAgain-action").onmousedown = function() {
+					showCssElements('playing','markerStuff'); 
+					hideCssElements('look', 'creditsLinkContainerRight' ); 
+					startGame(); 
+					lookMode=false;
+					document.getElementById("webGlContainer").style.cursor = "w-resize";
+				};
+			}
+			
+			function playInstrStartAction() {
+			
+				hideCssElements('playInstr');
+				startSound.play();
+				startGame();
+				
+			}
+			
+			function getTexture( url ) {
+				
+				totalLoaders ++;
+				
+				var texture = new THREE.Texture();
+
+				var loader = new THREE.ImageLoader();
+				loader.addEventListener( 'load', function ( event ) {
+
+					texture.image = event.content;
+					texture.needsUpdate = true;
+					
+					if (url=='textures/BG.png') {
+						scene.add( backgroundPivot );
+					}
+
+					loadedLoaders ++;
+					progressbar();
+
+				} );
+				loader.load( url );
+				
+				textures.push(texture);
+
+				return texture;
+				
+			}
+						
+			function getModelJS( url, shaders ){
+								
+				totalLoaders ++;
+				
+				var loader = new THREE.BinaryLoader(),
+					callback = function( geometry ) { createMesh( geometry ) };
+				loader.load( url , callback);
+				
+				function createMesh( geometry ) {
+				
+					zmesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial() );
+					zmesh.material = new THREE.MeshBasicMaterial( shaders );
+					
+					group.add( zmesh );
+					
+					loadedLoaders ++;
+					progressbar();
+				
+				}
+				
+			}
+			
+			function progressbar(){
+				
+				document.getElementById('progress').style.width = window.innerWidth * loadedLoaders/totalLoaders + 'px';
+				if (loadedLoaders == totalLoaders) {
+				
+					document.getElementById('progress').style.display = 'none';
+					document.getElementById('logoContainer').style.display = 'none';
+					
+					document.getElementById('lookOrPlay').style.display = 'inline';
+					
+				}
+				
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				
+				background.scale.set(1999 * camera.aspect,1999,1);
+								
+				controls.handleResize();
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				
+				//Game
+				optimizeGameTime();
+				getCurrentBeats();
+				animateCameras();
+				animateMarker();
+				
+				//Blinking
+				if (Date.now() - lastBlink >= 1000/06 && blink) {
+					
+					lastBlink = Date.now();
+					
+					if (document.getElementById('etage01').style.display == 'inline') {
+						document.getElementById('etage01').style.display = 'none';
+						document.getElementById('etage02').style.display = 'inline';
+					}
+					else {
+						document.getElementById('etage01').style.display = 'inline';
+						document.getElementById('etage02').style.display = 'none';					
+					}	
+				
+				}
+				
+				//Update Zoetrope Rotation and Render				
+				if (Date.now() - lastFrameTime >= 1000/12) {
+					
+					lastFrameTime = Date.now();
+					
+					rotateZoetrope();
+					render();	
+					controls.update();
+				
+				}			
+				
+			}
+			
+			function optimizeGameTime () {
+				return false;
+			}			
+			
+			function optimizeGameTimeDefault () {
+				//optimize gametime according to the playhead of the music
+				if (music && music.position > 200) {
+					gameStarted = Date.now() - music.position; //subtract add here
+					optimizeGameTime = function () { return false; };
+				}
+			}
+					
+			function detectBrowser(){
+			
+				var nAgt = navigator.userAgent;
+				var browserName;
+
+				if ( nAgt.indexOf("Opera") != -1) browserName = "opera";
+				else if ( nAgt.indexOf("Chrome") != -1) browserName = "chrome";
+				else if ( nAgt.indexOf("Safari") != -1) browserName = "safari";
+				else if ( nAgt.indexOf("Firefox") != -1) browserName = "firefox";
+				
+				return(browserName);
+				
+			}
+			
+			function MouseWheelHandler(e) { 
+				
+				var delta = e.wheelDelta || -e.detail;
+				
+				wheelEventsCounter++;
+				addedWheelSpeed += Math.abs(delta);
+				
+				averageWheelSpeed = addedWheelSpeed/wheelEventsCounter;
+				
+				checkForTouchpadAndFirefox(delta);
+				
+				if (Math.abs(delta) >= averageWheelSpeed*0.8) {
+				
+					//1 oder -1
+					delta = Math.max(-1, Math.min(1, delta));
+					
+					mouseSpeed += Math.PI/12 * delta/3;
+				
+					if (dragToStart && Math.abs(mouseSpeed*70) > 2 ){
+						dragToStart = false;
+						//start game and hide other stuff
+						playInstrStartAction();
+						lastMouseWheelActionTime = now;
+					}
+					// If in game mode and wheel fast enough check the beat
+					else if ( !lookMode  &&  Math.abs(mouseSpeed*70) > 2 ) {
+						var now = Date.now();
+						if (  now - lastMouseWheelActionTime > 80  ) {
+							checkBeat();
+						}
+						lastMouseWheelActionTime = now;
+					}
+					
+				}
+				
+			}
+			
+			function checkForTouchpadAndFirefox(delta){
+				//Firefox interprets the Touchpad too ruff -> messed up delta / to small numbers
+				if (browser=="firefox" && lastWheelSpeed % Math.abs(delta) != 0 && Math.abs(delta) % lastWheelSpeed != 0 ) {
+					touchpadAndFirefox = true;
+					maxMissedBeats = 3; //compensate and make it harder
+					checkForTouchpadAndFirefox = function(){};
+					lastWheelSpeed = null;
+					return;
+				}
+				else if (browser != "firefox"){
+					checkForTouchpadAndFirefox = function(){};
+					lastWheelSpeed = null;
+					return;
+				}
+				lastWheelSpeed = Math.abs(delta);
+			}
+			
+			function MouseDownHandler(e){
+				
+				mouseDown = true;
+				mouseSpeed = 0;
+				
+				checkMouseBeat = true;
+				
+				// console.log(Math.round((Date.now() - gameStarted)/250)*250);
+								
+			}
+			
+			function MouseUpHandler(e){
+				
+				mouseDown = false;
+				
+				checkMouseBeat = false;
+				
+			}
+			
+			function MouseMoveHandler(e){
+			
+				if (mouseDown && lastMousePosition != undefined && controls.getState()==-1) {
+					mouseSpeed = (e.clientX - lastMousePosition)/70;
+					
+					if (dragToStart && Math.abs(mouseSpeed*70) > 4 ){
+						dragToStart = false;
+						//start game and hide other stuff
+						playInstrStartAction();
+						checkMouseBeat = false;
+					}
+					
+					// If in game mode and dragged fast enough check the beat
+					else if ( !lookMode && checkMouseBeat && Math.abs(mouseSpeed*70) > 4 ) {
+						checkBeat();
+						checkMouseBeat = false;
+					}
+
+				}
+				
+				lastMousePosition = e.clientX;
+				
+				// if ( (e.clientY < 0 || e.clientY > window.innerHeight) || (e.clientX < 0 || e.clientX > window.innerWidth) ) {
+					// console.log("out!");
+					
+					// mouseDown = false;
+				
+					// checkMouseBeat = false;
+					
+				// }
+				
+			}
+			
+			function rotateZoetrope() {
+
+				// Limit Mouse RotationSpeed
+				if (mouseSpeed > Math.PI/12) mouseSpeed = Math.PI/12;
+				else if (mouseSpeed < -Math.PI/12) mouseSpeed = -Math.PI/12;
+			
+				//LookMode -> mousedrag rotiert die zoetrope
+				if (lookMode){
+				
+					// Acceleration, yay!
+					targetRotation += (mouseSpeed - targetRotation)*.2;
+				
+					// Set Rotation			
+					group.rotation.y += targetRotation;
+					
+					// Slow out Mousespeed
+					if (mouseSpeed > 0) mouseSpeed -= 1/300;
+					if (mouseSpeed < 0) mouseSpeed += 1/300;
+	
+				}
+				
+				//Game
+				if (!lookMode){
+					
+					if ( gameStarted ){
+						basisRotationSpeed = (-Math.PI/12) * 0.75;
+					}
+					
+					//slow down when beat is missed
+					var missedBeatsSlowdown = missedBeats * ( -basisRotationSpeed / maxMissedBeats ) 
+					
+					mouseSpeed = -Math.abs(mouseSpeed);
+					
+					//calculate acceleration
+					targetRotation += ( ( mouseSpeed * 0.25 + basisRotationSpeed + missedBeatsSlowdown) - targetRotation )*.4;
+					if (targetRotation >= 0) {
+						targetRotation = 0;
+					}
+					
+					// Set Rotation				
+					group.rotation.y += targetRotation;
+					
+					// Slow out Mousespeed
+					if (mouseSpeed > 0) mouseSpeed -= 1/100;
+					if (mouseSpeed < 0) mouseSpeed += 1/100;					
+				}
+				
+				
+			}
+			
+			function zeroPad(num, places) {
+			  var zero = places - num.toString().length + 1;
+			  return Array(+(zero > 0 && zero)).join("0") + num;
+			}
+				
+			function render() {
+				renderer.render( scene, camera );
+			}
+
+			function freeMemoryAndGoTo (url) {
+			
+				document.getElementById( "webGlContainer" ).style.display = 'none';
+				
+				for (var i=0; i<textures.length; i++) {
+					if ( textures[i].image.outerHTML != '<img src="textures/BG.png">'){
+					    textures[i].deallocate();
+						renderer.deallocateTexture( textures[i] );
+					}
+				}
+
+				group.traverse( function ( child ) { 
+
+					try {
+					  	scene.remove( child );
+						renderer.deallocateObject( child );
+						child.deallocate();
+						child.geometry.deallocate();
+						child.material.deallocate();	
+					}
+					catch(err){}
+
+				} )
+				
+				if (url) {
+					setCookie("ZoetropeCH1",(hitBeats * pointMulti + previousScore),1);
+					window.location.href = url;
+				}
+			
+			}
+			
+			function showCssElements (){
+				for( var i = 0; i < arguments.length; i++ ) {
+					document.getElementById( arguments[i] ).style.display = 'inline';
+				}
+			}
+			
+			function hideCssElements (){
+				for( var i = 0; i < arguments.length; i++ ) {
+					document.getElementById( arguments[i] ).style.display = 'none';
+				}
+			}
+		
+			function startGame() {
+				
+				currentBeat = 0;
+				markedBeats = 0;
+				barCounter = 0;
+				nextCamera = 0;
+				hitBeats = 0;
+				missedBeats = 0;
+				averageWheelSpeed = 0;
+				wheelEventsCounter = 0;
+				addedWheelSpeed = 0;
+				music.setPosition(0000);
+				music.play();
+				optimizeGameTime = function () { optimizeGameTimeDefault(); };
+				gameStarted = Date.now();
+				displayPoints();
+				blink = false;
+				hideCssElements('etage02');
+				showCssElements('etage01');
+				
+			}
+			
+			function endGame(lost) {
+				
+				if (lost) {
+					//verloren
+					showCssElements("lost", "creditsLinkContainerLeft");
+					hideCssElements("markerStuff");
+					lostSound.play();
+				}
+				else {
+					if (hitBeats<0) {endGame(true); return false;}
+					//gewonnen
+					showCssElements("won", "creditsLinkContainerLeft");
+					hideCssElements("markerStuff");
+					basisRotationSpeed = 0;
+					wonSound.play();
+					// Etage blinken
+					blink = true;
+					// Etagen Areamap
+					var area = document.createElement( 'area' );
+					area.setAttribute('href','#');
+					area.setAttribute('shape', 'rect');
+					area.setAttribute('coords', '0,117,134,142');
+					area.setAttribute('id', 'chaptermapArea');
+					area.setAttribute('alt', 'Chapter04');
+					document.getElementById('chaptermap').appendChild(area);
+					document.getElementById("chaptermapArea").onmousedown = document.getElementById("won-LevelUp-action").onmousedown;
+					
+				}
+				gameStarted = null;
+				document.getElementById("webGlContainer").style.cursor = "default";
+				music.stop();
+
+			}
+
+			function removeChaptermapArea(){
+				var child = document.getElementById("chaptermapArea");
+				var parent = document.getElementById("chaptermap");
+				parent.removeChild(child);
+			}
+			
+			function getCurrentBeats() {
+				
+				if (gameStarted!="" && gameStarted!=null) {
+									
+					var currentTime = Date.now() - gameStarted ;
+					
+					// get upcoming Beats and create Marker
+					if (currentTime >= beats[markedBeats] - markerDelay){
+						createMarker(beats[markedBeats] - markerDelay, "important");
+						markedBeats++;
+					}
+					// create bar pattern
+					if (currentTime >= barCounter*250 - markerDelay) {
+						if (barCounter*250 - markerDelay >= 0) {
+							if (barCounter%4 <= 0) {
+								createMarker(barCounter*250 - markerDelay, "importantBar");
+							}
+							else {
+								createMarker(barCounter*250 - markerDelay, "bar");
+							}
+						}
+						barCounter++;
+					}
+
+					
+					//get current Beat
+					if (currentTime >= beats[currentBeat] + accuracy){
+						
+						//check if beat was not hit
+						if (lastHitBeat != currentBeat){
+							missedBeat();
+						}
+						else if (missedBeats > 0) {
+							--missedBeats;
+						}
+						
+						//next beat
+						currentBeat++;
+											
+					}
+					
+					//Time's up
+					if (currentTime >= musicLength){
+						endGame();
+					}
+				}
+				
+			}
+			
+			function animateCameras() {
+				
+				if (gameStarted!="" && gameStarted!=null) {
+					
+					var currentTime = Date.now() - gameStarted ;
+					
+					if (cameras[nextCamera] && currentTime >= cameras[nextCamera]["time"]){
+					
+						camera.position = new THREE.Vector3(cameras[nextCamera].position.x,cameras[nextCamera].position.y,cameras[nextCamera].position.z) ;
+						controls.target = new THREE.Vector3(cameras[nextCamera].lookAt.x,cameras[nextCamera].lookAt.y,cameras[nextCamera].lookAt.z) ;
+						
+						backgroundPivot.position = camera.position;
+						backgroundPivot.rotation = camera.rotation;
+						
+						nextCamera++;	
+							
+					}
+					
+				}
+				
+			}
+			
+			function checkBeat() {
+								
+				//check if current time fits current Beat or the previous one
+				var currentTime = Date.now() - gameStarted;
+								
+				if ( Math.abs( beats[currentBeat] - currentTime ) <= accuracy && lastHitBeat != currentBeat){
+
+					hitBeats++;
+					lastHitBeat = currentBeat;
+					
+					colorFadeTimeline({r:51,g:51,b:51},{r:30,g:30,b:30},5);
+					
+				}
+				//no penality for firefox and touchpad users
+				else if (!touchpadAndFirefox) {
+					missedBeat();
+					//penality for dragging even if there was no marker
+					hitBeats--;
+				}
+				// update Points
+				displayPoints();
+							
+			}
+			
+			function missedBeat(){
+				
+				++missedBeats;
+				
+				if ( missedBeats < maxMissedBeats ) {
+					failSound.play();
+				}
+				else {
+					//missed more beats then maxMissedBeats -> lost
+					endGame(true);
+				}
+				colorFadeTimeline({r:51,g:51,b:51},{r:200,g:41,b:81},8);
+			
+			}
+			
+			function colorFadeTimeline(start,end,steps,   i,inbetw,fin){
+				i = i || 0 ;
+				if (!inbetw) {
+					inbetw = new Object();
+					inbetw.r = start.r;
+					inbetw.g = start.g;
+					inbetw.b = start.b;
+				}
+				fin = fin || false ;
+				
+				inbetw.r += (end.r - start.r)/(steps); 
+				inbetw.g += (end.g - start.g)/(steps); 
+				inbetw.b += (end.b - start.b)/(steps); 
+				
+				i++;
+				document.getElementById('timeline1').style.backgroundColor = "rgb("+Math.round(inbetw.r)+", "+Math.round(inbetw.g)+", "+Math.round(inbetw.b)+")" ;
+				document.getElementById('timeline2').style.backgroundColor = "rgb("+Math.round(inbetw.r)+", "+Math.round(inbetw.g)+", "+Math.round(inbetw.b)+")" ;
+				
+				if (i != steps) {
+					requestAnimationFrame(function(){colorFadeTimeline(start,end,steps,i,inbetw,fin);});
+				}
+				else if (!fin) {
+					requestAnimationFrame(function(){colorFadeTimeline(end,start,steps,null,null,true);});
+				}
+				
+			}
+			
+			function animateMouseIllu(lastExec, i) {
+			
+				i = i || 0;
+				lastExec = lastExec || 0;
+				
+				if ( Date.now()-lastExec >= 1000/12 ) {
+					if (i < 13) {
+						i++;
+					}
+					else {
+						i = 0;
+					}
+					document.getElementById("mouseIllu").style.backgroundPosition = "0 "+(-i*117)+"px";
+					lastExec = Date.now();
+				}
+				
+				if (document.getElementById("playInstr").style.display!="none") {
+					requestAnimationFrame(function(){animateMouseIllu(lastExec, i);});
+				}
+				
+			}
+			
+			function createMarker(currentTime, kind) {
+				
+				// id is used as a CSS id and as the time the marker is added
+				// status is 0 when marker is added and 1 when marker is done
+				marker.push({id: currentTime, k:kind, status: 0});
+				
+				// create marker in html
+				var mark = document.createElement( 'div' );
+				mark.setAttribute('id', currentTime+kind);
+				mark.className = 'marker '+kind+'Marker';
+				mark.style.left = "90px";
+				document.body.appendChild( mark );
+				
+			}
+			
+			function animateMarker() {
+				
+				var currentTime = Date.now() - gameStarted ;
+				
+				for (var i=0;i<marker.length;i++){
+					
+					//update status
+					marker[i].status = (currentTime - marker[i].id) / markerDelay;
+					
+					//translate the status to html
+					var left = 90 + marker[i].status * (window.innerWidth - 90 - 410);
+					if (marker[i].k == "important") left--;
+ 					var div = document.getElementById(marker[i].id+marker[i].k);
+					div.style.left = left+"px";
+					
+					//delete finished marker
+					if (marker[i].status >= 1) {
+						marker.splice(i,1);
+						div.parentNode.removeChild(div);
+					}
+					
+				}
+				
+			}			
+		
+			function displayPoints() {
+				
+				var points = hitBeats * pointMulti + previousScore;
+		
+				if ( points >= 0 ) {
+					document.getElementById('points').innerHTML = '+' + zeroPad(points, 7);
+				}
+				else {
+					document.getElementById('points').innerHTML = '-' + zeroPad(Math.abs(points), 7);
+				}
+			
+			}
+		
+			function loadSounds() {
+						
+				totalLoaders += 5;
+				
+				soundManager.debugMode = false;
+				soundManager.audioFormats.mp3.required = false;
+				soundManager.html5Only = true;
+				soundManager.html5PollingInterval = 10;
+				soundManager.useFastPolling = true;
+				soundManager.useHighPerformance = true;
+				soundManager.preferFlash = false;
+				
+				soundManager.setup({
+				  url: '', 
+				  onready: function() {
+				    music = soundManager.createSound({
+					  autoLoad: true, 
+				      id: 'music',
+					  // url: ['sounds/Zoetrope_Music_Chapter01.ogg','sounds/Zoetrope_Music_Chapter01.mp3'],
+					  url: 'sounds/Zoetrope_Music_Chapter01.ogg',
+					  volume: 100,
+					  onload: function() {loadedLoaders ++; progressbar();}
+				    });
+					startSound = soundManager.createSound({
+				      autoLoad: true,
+					  id: 'startSound',
+					  // url: ['sounds/Zoetrope_Feelthebeat2.ogg','sounds/Zoetrope_Feelthebeat2.mp3'],
+					  url: 'sounds/Zoetrope_Feelthebeat2.ogg',
+					  volume: 100,
+					  onload: function() {loadedLoaders ++; progressbar();}
+				    });
+					failSound = soundManager.createSound({
+				      autoLoad: true,
+					  id: 'failSound',
+					  // url: ['sounds/Zoetrope_Loose.ogg','sounds/Zoetrope_Loose.mp3'],
+					  url: 'sounds/Zoetrope_Loose.ogg',
+					  volume: 100,
+					  onload: function() {loadedLoaders ++; progressbar();}
+				    });
+					wonSound = soundManager.createSound({
+				      autoLoad: true,
+					  id: 'wonSound',
+					  // url: ['sounds/Zoetrope_Yourock_1.ogg','sounds/Zoetrope_Yourock_1.mp3'],
+					  url: 'sounds/Zoetrope_Yourock_1.ogg',
+					  volume: 100,
+					  onload: function() {loadedLoaders ++; progressbar();}
+				    });
+					lostSound = soundManager.createSound({
+				      autoLoad: true,
+					  id: 'lostSound',
+					  // url: ['sounds/Zoetrope_Lost.ogg','sounds/Zoetrope_Lost.mp3'],
+					  url: 'sounds/Zoetrope_Lost.ogg',
+					  volume: 100,
+					  onload: function() {loadedLoaders ++; progressbar();}
+				    });
+				  },
+				  ontimeout: function() {
+				  }
+				});
+				
+			}
+		
+			function getCookie(c_name) {
+				var i,x,y,ARRcookies=document.cookie.split(";");
+				for (i=0;i<ARRcookies.length;i++) {
+			  		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+			  		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+			  		x=x.replace(/^\s+|\s+$/g,"");
+			  		if (x==c_name) {
+			    		return unescape(y);
+			    	}
+			  	}
+			}
+
+			function setCookie(c_name,value,exdays) {
+				var exdate=new Date();
+				exdate.setDate(exdate.getDate() + exdays);
+				var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+				document.cookie=c_name + "=" + c_value;
+			}
+			
+			
+			
+		</script>
+				<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36426079-1']);
+  _gaq.push(['_setDomainName', 'sehsucht.de']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+	</body>
+</html>

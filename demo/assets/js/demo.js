@@ -275,15 +275,15 @@ var DEMO = {
 		this.ms_Water.render();
 		this.ms_Renderer.render(this.ms_Scene, this.ms_Camera);
 		this.ms_Controls.update(this.clock.getDelta());
-		if (this.mixers.length > 0) {
-			for (var i = 0; i < this.mixers.length; i++) {
-				console.log(i);
-				this.mixers[i].update(this.clock.getDelta());
+		// if (this.mixers.length > 0) {
+		// 	for (var i = 0; i < this.mixers.length; i++) {
+		// 		console.log(i);
+		// 		this.mixers[i].update(this.clock.getDelta());
 
-			}
-		}
+		// 	}
+		// }
 	},
-
+	delta: null,
 	update: function update() {
 		// if (this.ms_FilesDND != null) {
 		// 	this.ms_FilesDND.rotation.y += 0.01;
@@ -304,17 +304,20 @@ var DEMO = {
 
 		// 	}
 		// }
-		console.log(DEMO.mixers);
+		// console.log(DEMO.mixers);
 		if (this.mixers.length > 0) {
 			for (var i = 0; i < this.mixers.length; i++) {
-				console.log(i);
-				this.mixers[i].update(this.clock.getDelta());
-
+				// console.log(i);
+				delta=this.clock.getDelta();
+				if (delta==0)
+					delta = 0.00009999999747378752;
+				this.mixers[i].update(delta);
 			}
 		}
 		
 
 		// this.mixers[1].update(this.clock.getDelta());
+		// console.log(this.clock.getDelta());
 		// this.mixers[0].update(this.clock.getDelta());
 
 	},
