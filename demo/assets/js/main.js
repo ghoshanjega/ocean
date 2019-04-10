@@ -1,5 +1,6 @@
 function mainLoop() {
-	requestAnimationFrame(mainLoop);
+	// setTimeout ( function() {requestAnimationFrame(mainLoop); DEMO.update()}, 1000 );
+	requestAnimationFrame(mainLoop)
 	DEMO.update();
 }
 

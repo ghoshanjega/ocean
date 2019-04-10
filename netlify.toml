@@ -5,12 +5,14 @@ ID = "Your_Site_ID"
 
 [build]
   # This is the directory to change to before starting a build.
-  base    = "demo/index.html"
+  #base    = "demo/index.html"
 
 # A basic redirects rule
-# [[redirects]]
-#   from = "/*"
-#   to = "/blog/:splat"
+[[redirects]]
+  from = "/"
+  to = "/demo/index.html"
+
+  force = true
 
 
 
