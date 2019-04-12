@@ -22,6 +22,7 @@ function onDocumentMouseDown(event) {
 $(function() {
 	WINDOW.initialize();
 
+
 	document.addEventListener('click', onDocumentMouseDown, false);
 	
 	var parameters = {
@@ -40,6 +41,7 @@ $(function() {
 	};
 	
 	DEMO.initialize('canvas-3d', parameters);
+	DEMO.addControls(parameters);
 	
 	WINDOW.resizeCallback = function(inWidth, inHeight) { DEMO.resize(inWidth, inHeight); };
 	DEMO.resize(WINDOW.ms_Width, WINDOW.ms_Height);

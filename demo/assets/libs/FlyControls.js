@@ -2,7 +2,7 @@
  * @author James Baicoianu / http://www.baicoianu.com/
  */
 
-THREE.FlyControls = function ( object, domElement ) {
+THREE.FlyControls = function ( object, inParameters, domElement ) {
 
 	this.object = object;
 
@@ -11,8 +11,12 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	// API
 
-	this.movementSpeed = 1.0;
-	this.rollSpeed = 0.005;
+	this.movementSpeed = 150.0;
+	this.movementSpeedMultiplier = 1;
+	this.rollSpeed = 0.5;
+
+	this.inParameters = inParameters
+	
 
 	this.dragToLook = false;
 	this.autoForward = false;
@@ -51,7 +55,7 @@ THREE.FlyControls = function ( object, domElement ) {
 
 		switch ( event.keyCode ) {
 
-			case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
+			case 16: /* shift */ this.movementSpeedMultiplier = 10; break;
 
 			case 87: /*W*/ this.moveState.forward = 1; break;
 			case 83: /*S*/ this.moveState.back = 1; break;
@@ -59,7 +63,8 @@ THREE.FlyControls = function ( object, domElement ) {
 			case 65: /*A*/ this.moveState.left = 1; break;
 			case 68: /*D*/ this.moveState.right = 1; break;
 
-			case 82: /*R*/ this.moveState.up = 1; break;
+			// case 82: /*R*/ this.moveState.up = 1; break;
+			case 82: /*R*/ this.resetCamera(); break;
 			case 70: /*F*/ this.moveState.down = 1; break;
 
 			case 38: /*up*/ this.moveState.pitchUp = 1; break;
@@ -77,6 +82,11 @@ THREE.FlyControls = function ( object, domElement ) {
 		this.updateRotationVector();
 
 	};
+
+	this.resetCamera = function () {
+		this.object.position.set(0, Math.max(inParameters.width * 1.5, inParameters.height) / 20, -inParameters.height / 2);
+		this.object.lookAt(new THREE.Vector3(0, 0, 0));
+	}
 
 	this.keyup = function ( event ) {
 
@@ -156,6 +166,10 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	};
 
+	this.getObject = function () {
+		return object;
+	};
+
 	this.mouseup = function ( event ) {
 
 		event.preventDefault();
@@ -186,7 +200,7 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	this.update = function ( delta ) {
 
-		var moveMult = delta * this.movementSpeed;
+		var moveMult = delta * this.movementSpeed * this.movementSpeedMultiplier;
 		var rotMult = delta * this.rollSpeed;
 
 		this.object.translateX( this.moveVector.x * moveMult );
@@ -198,7 +212,7 @@ THREE.FlyControls = function ( object, domElement ) {
 
 		// expose the rotation vector for convenience
 		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
-
+ 
 
 	};
 
@@ -210,7 +224,7 @@ THREE.FlyControls = function ( object, domElement ) {
 		this.moveVector.y = ( - this.moveState.down + this.moveState.up );
 		this.moveVector.z = ( - forward + this.moveState.back );
 
-		//console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
+		// console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
 
 	};
 
